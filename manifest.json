@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Gogeta's Ad Blocker",
-  "version": "2.0.0",
-  "description": "Blocks requests to common ad networks and hides recognizable ad placements as pages load.",
+  "version": "2.1.0",
+  "description": "Blocks known ad requests and hides recognizable ad placements, including some on YouTube and Spotify.",
   "permissions": ["declarativeNetRequest"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "content_scripts": [

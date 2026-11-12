@@ -1,11 +1,7 @@
 (() => {
   "use strict";
 
-  // Static content scripts are automatically installed on each matching page.
-  // Avoid broad matches such as any class containing "ad": those often hide
-  // ordinary page UI (for example, "header", "load-more", or "address").
-  const STYLE_ID = "gogeta-ad-blocker-styles";
-  const AD_SELECTOR = [
+  const COMMON_SELECTORS = [
     "[data-ad]",
     "[data-ad-slot]",
     "[data-google-query-id]",
@@ -22,11 +18,50 @@
     'iframe[src*="googlesyndication.com"]',
     'iframe[src*="googleadservices.com"]',
     'iframe[id^="google_ads_iframe"]'
-  ].join(",");
+  ];
+
+  // Keep platform-specific selectors scoped to their own sites. Avoid broad
+  // [class*="ad"] rules, which can match ordinary controls and text.
+  const YOUTUBE_SELECTORS = [
+    "ytd-ad-slot-renderer",
+    "ytd-in-feed-ad-layout-renderer",
+    "ytd-display-ad-renderer",
+    "ytd-promoted-sparkles-web-renderer",
+    "ytd-promoted-video-renderer",
+    "ytd-companion-slot-renderer",
+    "#player-ads",
+    "#masthead-ad",
+    ".video-ads",
+    ".ytp-ad-overlay-container",
+    ".ytp-ad-overlay-slot",
+    ".ytp-ad-text-overlay",
+    ".ytp-ad-image-overlay"
+  ];
+
+  const SPOTIFY_SELECTORS = [
+    '[data-testid="ad"]',
+    '[data-testid="ad-slot"]',
+    '[data-testid="ad-banner"]',
+    '[data-testid="ad-card"]',
+    '[data-testid="audio-ad"]',
+    '[data-testid="billboard-ad"]',
+    '[aria-label="Advertisement" i]',
+    '[aria-label="Sponsored" i]'
+  ];
+
+  const hostname = location.hostname.toLowerCase();
+  const isYouTube = hostname === "youtube.com" || hostname.endsWith(".youtube.com") || hostname === "youtube-nocookie.com" || hostname.endsWith(".youtube-nocookie.com");
+  const isSpotify = hostname === "spotify.com" || hostname.endsWith(".spotify.com");
+  const siteSelectors = [
+    ...COMMON_SELECTORS,
+    ...(isYouTube ? YOUTUBE_SELECTORS : []),
+    ...(isSpotify ? SPOTIFY_SELECTORS : [])
+  ];
+  const AD_SELECTOR = siteSelectors.join(",");
+  const STYLE_ID = "gogeta-ad-blocker-styles";
 
   function installStyles() {
     if (!document.documentElement || document.getElementById(STYLE_ID)) return;
-
     const style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = `${AD_SELECTOR} { display: none !important; }`;
@@ -59,7 +94,7 @@
     }
   });
 
-  const observeWhenReady = () => {
+  function observeWhenReady() {
     if (!document.documentElement) {
       requestAnimationFrame(observeWhenReady);
       return;
@@ -68,10 +103,10 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["class", "id", "src", "aria-label", "data-ad", "data-ad-slot"]
+      attributeFilter: ["class", "id", "src", "aria-label", "data-ad", "data-ad-slot", "data-testid"]
     });
     scanDocument();
-  };
+  }
 
   observeWhenReady();
 })();

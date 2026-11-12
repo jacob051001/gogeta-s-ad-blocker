@@ -1,15 +1,16 @@
 # Gogeta's Ad Blocker
 
-A small Manifest V3 Chrome extension for Chromebook and desktop Chrome. It blocks requests to a maintained set of known ad-serving domains and hides several recognizable ad placements. Filtering starts automatically on web pages; there is no need to click the extension button or reload an open page.
+A small Manifest V3 Chrome extension for Chromebook and desktop Chrome. It blocks requests to a set of known ad-serving domains and hides recognizable ad placements, including targeted selectors for YouTube and Spotify. It runs automatically on HTTP and HTTPS pages and watches for matching elements added later.
 
-> **Limits:** No extension can guarantee that it will block every ad. Ads served from a site's own domain, sponsored content, and new or unlisted ad networks may not be detected. The page-element rules are deliberately targeted, but may occasionally hide a legitimate element on a site that uses the same ad-specific markup.
+> **Limits:** No extension can guarantee that it will block every ad. Sites can change their markup, serve ads from their own domains, or deliver ads as part of media streams. This extension does not reliably remove YouTube in-stream video ads or Spotify audio ads; attempting to block media delivery broadly can also break normal playback.
 
 ## Features
 
-- Blocks requests matching domains listed in `rules.json`.
-- Hides common ad slots, explicitly labeled ads, and ad-network iframes.
+- Blocks requests matching domains and ad-specific URL paths in `rules.json`.
+- Hides common ad slots and explicitly labeled ads.
+- Targets common YouTube ad placements and player overlays, plus selected Spotify ad-card markers.
 - Observes DOM changes so newly inserted matching elements are hidden without a page reload.
-- Runs automatically on HTTP and HTTPS pages in each frame.
+- Uses specific selectors rather than generic `class` substring rules to reduce accidental hiding of normal page controls.
 
 ## Install on a Chromebook
 
@@ -17,7 +18,7 @@ A small Manifest V3 Chrome extension for Chromebook and desktop Chrome. It block
 2. In Chrome, open `chrome://extensions`.
 3. Enable **Developer mode**.
 4. Click **Load unpacked** and select the extracted project folder (the folder containing `manifest.json`).
-5. Visit a website. The extension begins filtering automatically; reopen an already-open tab or refresh it once after installing/updating the extension so Chrome loads the new content script.
+5. After installing or updating, reopen YouTube or Spotify tabs so Chrome loads the updated extension code.
 
 Chrome does not allow extensions to run on certain protected pages, such as `chrome://` pages and the Chrome Web Store. Managed school or work devices may restrict unpacked extensions.
 
@@ -25,18 +26,19 @@ Chrome does not allow extensions to run on certain protected pages, such as `chr
 
 - Add or remove network filters in `rules.json`. Keep rule IDs unique and use valid Chrome Declarative Net Request rule syntax.
 - Adjust the narrow, ad-specific selectors in `content.js`. Avoid generic selectors such as `[class*="ad"]`; they can match normal words and hide unrelated page controls.
-- Network block rules affect future requests. The DOM observer handles matching ad elements added after the content script starts.
+- Do not block broad YouTube or Spotify media/CDN domains: that can prevent legitimate video or music playback.
 
 ## Project files
 
 - `manifest.json` — extension permissions, automatic content-script registration, and static network rules.
-- `rules.json` — domain-based network filters.
+- `rules.json` — domain and ad-path network filters.
 - `content.js` — targeted page-element hiding and mutation observer.
 - `service-worker.js` — retained from the initial prototype; not required by the current manifest.
+- `LICENSE` — MIT license.
 
 ## Development
 
-This project uses plain JavaScript and JSON; there is no build step or Python runtime requirement. After editing a file, use **Reload** on `chrome://extensions` to apply extension changes. Site changes may require reopening the affected tab.
+This project uses plain JavaScript and JSON; there is no build step or Python runtime requirement. After editing a file, use **Reload** on `chrome://extensions` to apply extension changes. Reopen affected tabs to load the updated content script.
 
 ## License
 
