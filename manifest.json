@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Simple Live Ad Blocker",
+  "version": "1.0",
+  "description": "Blocks some ad requests and hides many ads on the current page.",
+  "permissions": ["activeTab", "scripting", "declarativeNetRequest"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Hide ads on this page"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ad_rules",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  }
+}
