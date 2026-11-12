@@ -1,40 +1,45 @@
-# Simple Live Ad Blocker
+# Gogeta's Ad Blocker
 
-A lightweight Chrome extension for Chromebooks that blocks requests to some common ad domains and hides many ad elements on the current page. It also watches for new matching elements, so hiding them does not require reloading the page.
+A lightweight browser extension for Chrome on Chromebooks that hides common ad elements and blocks some ad network requests without reloading the page.
 
-> This is a starter project, not a guarantee that every ad will be blocked. Sites may serve ads from their own domains or use sponsored content that cannot reliably be identified as an ad.
+## What it does
 
-## Features
+- Blocks requests to common ad domains using Chrome's Declarative Net Request API.
+- Hides likely ad iframes and elements on the current page.
+- Watches for newly inserted ad content and hides it automatically.
+- Makes it easy to customize for your own preferred ad-blocking rules.
 
-- Blocks requests to several common ad network domains using Chrome's Declarative Net Request API.
-- Hides selected ad iframes and elements on the active page.
-- Observes page changes and hides matching elements added later.
-- Applies the page-element hiding when you click the extension icon.
+## Files in this project
 
-## Project files
-
-- `manifest.json` — Chrome extension configuration
-- `service-worker.js` — injects the content script when the extension button is clicked
-- `content.js` — hides matching elements and observes the page for changes
-- `rules.json` — network blocking rules
+- `manifest.json` — extension configuration
+- `service-worker.js` — runs when you click the extension icon
+- `content.js` — hides ad elements and observes the page for new ones
+- `rules.json` — ad-domain block list
+- `README.md` — setup and usage guide
+- `.gitignore` — ignores local editor and system files
+- `LICENSE` — MIT license
 
 ## Install on a Chromebook
 
-1. Put the extension files in one folder.
-2. In Chrome, open `chrome://extensions`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked** and select the folder.
-5. Open a webpage and click the extension icon to hide matching ads on that page.
+1. Download or clone this repository.
+2. Open Chrome and visit `chrome://extensions`.
+3. Turn on Developer mode.
+4. Click `Load unpacked`.
+5. Select the folder containing this extension.
+6. Open a website and click the extension icon to apply the ad filter on the current tab.
 
-Some school- or work-managed Chromebooks may prevent installing unpacked extensions.
+## Notes
 
-## Limitations
-
-- The block list only covers a small set of common ad domains; it will not block every ad.
-- The element selectors are heuristics. They may miss ads or, on some sites, hide non-ad content.
-- The page-hiding script runs on the active page after you click the extension button. Network rules are applied by Chrome while the extension is enabled.
-- Chrome restricts extensions from running on certain pages, such as internal Chrome pages and the Chrome Web Store.
+- This is a practical starter project, not an all-in-one guarantee of perfect ad blocking.
+- Some ads still slip through because websites can use first-party ads, custom ad scripts, or sponsored content.
+- Managed Chromebooks or school/work devices may block installing unpacked extensions.
 
 ## Customization
 
-Add network rules to `rules.json` and site-specific selectors to the selector list in `content.js`. Be careful when adding broad selectors, since they can hide legitimate page content.
+- Update `rules.json` to add or remove blocked domains.
+- Update the selector list in `content.js` to target more ads or fewer false positives.
+- If you add more advanced filters, keep them narrow so normal site content is not hidden.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for details.
